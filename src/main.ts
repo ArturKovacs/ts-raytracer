@@ -16,7 +16,7 @@ const image = context.createImageData(WIDTH, HEIGHT);
 const sharedPixelsBuffer = new SharedArrayBuffer(WIDTH * HEIGHT * 4);
 const sharedPixelsView = new Uint8ClampedArray(sharedPixelsBuffer);
 
-const THREAD_COUNT = 1;
+const THREAD_COUNT = 16;
 
 const finishedWithFrame = new Set<number>();
 const workers: Worker[] = [];
@@ -49,6 +49,7 @@ for (let i = 0; i < THREAD_COUNT; i++) {
           context.clearRect(0, 0, WIDTH, HEIGHT);
           image.data.set(sharedPixelsView);
           context.putImageData(image, 0, 0);
+          requestAnimationFrame(render)
         }
     })
     workers.push(worker)
@@ -58,7 +59,7 @@ function render(time: number) {
   const camPos: Vec3 = { x: 0, y: 0, z: 0 };
   const camDir: Vec3 = normalize({
     x: 0,
-    y: Math.sin(time * 0.001) * 0.5,
+    y: Math.sin(time * 0.0005) * 0.2,
     z: 1
   });
   const msg: RenderThreadMsg = {
