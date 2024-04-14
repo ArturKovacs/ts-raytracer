@@ -2,48 +2,32 @@ import { Ray } from "./geometry";
 import { Vec3, cross, dot, normalize, vecAdd, vecLen, vecMult, vecSub } from "./math";
 import { HitResult, Scene } from "./scene";
 
-const WIDTH = 800;
-const HEIGHT = 500;
+export const WIDTH = 800;
+export const HEIGHT = 500;
 const ASPECT_RATIO = WIDTH / HEIGHT;
 const UP: Vec3 = { x: 0, y: 1, z: 0 };
 
-const THREAD_COUNT = 16;
-
 export class Renderer {
-    protected canvas: HTMLCanvasElement;
-    protected context: CanvasRenderingContext2D;
-    protected image: ImageData;
     protected scene: Scene;
+    protected yStart: number;
+    protected yEnd: number; // the row index immediately after the last row that we should render
+    protected pixelSlice: Uint8ClampedArray;
 
-    protected workers: Worker[];
-
-    constructor(canvas: HTMLCanvasElement) {
-        this.canvas = canvas;
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
-        this.context = canvas.getContext("2d")!;
-        this.image = this.context.createImageData(WIDTH, HEIGHT);
+    constructor(pixelSlice: Uint8ClampedArray, yStart: number, yEnd: number) {
         this.scene = new Scene();
-        this.workers = [];
-        for (let i = 0; i < THREAD_COUNT; i++) {
-            const worker = new Worker(new URL("./render-thread.ts", import.meta.url));
-            worker.addEventListener("message", (message) => {
-                console.log("MAIN: " + message.data);
-            })
-            // worker.postMessage({ x: 13, msg: "lel" });
-            this.workers.push()
-        }
+        this.pixelSlice = pixelSlice;
+        this.yStart = yStart;
+        this.yEnd = yEnd;
     }
 
-    render(time: number) {
-        this.context.clearRect(0, 0, WIDTH, HEIGHT);
+    getYStart(): number {
+        return this.yStart;
+    }
 
-        const camPos: Vec3 = { x: 0, y: 0, z: 0 };
-        const camDir: Vec3 = normalize({
-            x: 0,
-            y: Math.sin(time * 0.001) * 0.5,
-            z: 1
-        });
+    render(time: number, camPos: Vec3, camDir: Vec3) {
+        // this.pixelSlice.fill(150);
+        // return;
+
         // Have to multiply by negative one because we are in a left handed coord system
         const camRight = vecMult(normalize(cross(camDir, UP)), -1);
         const camUp = cross(vecMult(camRight, -1), camDir);
@@ -53,7 +37,7 @@ export class Renderer {
         // would cause a bigger field of view)
         const widthOrHeight = HEIGHT;
 
-        for (let y = 0; y < HEIGHT; y++) {
+        for (let y = this.yStart; y < this.yEnd; y++) {
             for (let x = 0; x < WIDTH; x++) {
                 const targetDir = normalize(
                     vecAdd(
@@ -64,21 +48,12 @@ export class Renderer {
                         camDir
                     )
                 );
-                // const targetPixelWorld: Vec3 = {
-                //     x: (x / wh) - (ASPECT_RATIO / 2),
-                //     y: -((y / wh) - 0.5),
-                //     z: 1
-                // };
                 const ray: Ray = {
                     dir: targetDir,
                     orig: camPos
                 };
 
                 const hitResult = this.scene.intersect(ray);
-                // if (hitResult) {
-                    // console.log(hitResult)
-                    // debugger;
-                // }
                 let color;
                 if (hitResult) {
                     const colorVec = this.shade(hitResult);
@@ -86,17 +61,9 @@ export class Renderer {
                 } else {
                     color = [0, 0, 0, 255];
                 }
-                // if (x < (WIDTH / 2 + WIDTH * 0.25 * Math.sin(time * 0.001))) {
-                //     color = [255, 0, 0, 255];
-                // } else {
-                //     color = [0, 100, 255, 255];
-                // }
-                this.image.data.set(color, (y * WIDTH + x) * 4);
-
-                this.image.data.subarray()
+                this.pixelSlice.set(color, ((y - this.yStart) * WIDTH + x) * 4);
             }
         }
-        this.context.putImageData(this.image, 0, 0);
     }
 
     shade(surfacePoint: HitResult): Vec3 {
