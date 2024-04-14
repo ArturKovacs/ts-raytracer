@@ -9,7 +9,7 @@ const renderer = new Renderer(canvas);
 function render(time: number) {
   renderer.render(time);
 
-  window.requestAnimationFrame(render);
+  // window.requestAnimationFrame(render);
 }
 
 render(0);
