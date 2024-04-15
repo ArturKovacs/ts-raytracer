@@ -32,7 +32,7 @@ export interface RenderThreadOutput {
 let renderer: Renderer | null = null;
 
 self.addEventListener("message", (message: MessageEvent<RenderThreadMsg>) => {
-    console.log("received message in worker thread", message.data);
+    // console.log("received message in worker thread", message.data);
     if (message.data.kind == "init") {
         renderer = new Renderer(message.data.pixelSlice, message.data.yStart, message.data.yEnd);
     } else if (message.data.kind == "render") {

@@ -3,7 +3,7 @@ import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import { HEIGHT, Renderer, WIDTH } from './renderer.ts'
 import { RenderThreadMsg, RenderThreadOutput } from './render-thread.ts';
-import { Vec3, normalize } from './math.ts';
+import { Vec3, normalize, vecSub } from './math.ts';
 
 const BYTES_PER_PIXEL = 4;
 
@@ -41,7 +41,7 @@ for (let i = 0; i < THREAD_COUNT; i++) {
 
     worker.addEventListener("message", (event: MessageEvent<RenderThreadOutput>) => {
         finishedWithFrame.add(event.data.yStart);
-        console.log("received render done for", event.data.yStart)
+        // console.log("received render done for", event.data.yStart)
         if (finishedWithFrame.size == THREAD_COUNT) {
           // debugger;
           // We are done with rendering.
@@ -56,12 +56,13 @@ for (let i = 0; i < THREAD_COUNT; i++) {
 }
 
 function render(time: number) {
-  const camPos: Vec3 = { x: 0, y: 0, z: 0 };
-  const camDir: Vec3 = normalize({
-    x: 0,
-    y: Math.sin(time * 0.0005) * 0.2,
-    z: 1
-  });
+  const lookAt: Vec3 = {
+    x: 0, y: -5, z: 20
+  };
+
+  const camPos: Vec3 = { x: Math.sin(time * 0.0005) * 4, y: -3, z: 8 };
+  const camDir: Vec3 = normalize(vecSub(lookAt, camPos));
+
   const msg: RenderThreadMsg = {
     camDir,
     camPos,
@@ -70,7 +71,7 @@ function render(time: number) {
   }
   finishedWithFrame.clear();
   for (const worker of workers) {
-    console.log("sent render request")
+    // console.log("sent render request")
     worker.postMessage(msg);
   }
 }
