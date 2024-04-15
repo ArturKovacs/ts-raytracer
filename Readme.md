@@ -1,4 +1,6 @@
 
+![Screenshot of a rendered scene](screenshot.png)
+
 ## About
 
 This is a small frontend application that displays a simple 3D scene using ray-tracing.
