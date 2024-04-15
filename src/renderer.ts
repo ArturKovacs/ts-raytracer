@@ -78,7 +78,7 @@ export class Renderer {
         if (surfacePoint.reflect) {
             const toReflected = reflect(ray.dir, surfacePoint.normal);
             const reflectRay = {
-                orig: vecAdd(surfacePoint.pos, vecMult(toReflected, 0.01)),
+                orig: vecAdd(surfacePoint.pos, vecMult(toReflected, 0.0001)),
                 dir: toReflected
             };
             return vecMult(this.getColor(reflectRay, depth + 1), 0.8);

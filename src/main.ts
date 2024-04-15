@@ -69,7 +69,7 @@ for (let i = 0; i < THREAD_COUNT; i++) {
 
 function render(time: number) {
   const lookAt: Vec3 = [
-    0, -5, 20
+    6, -5, 20
   ];
 
   const camPos: Vec3 = [Math.sin(time * 0.001) * 7, -3, 8];

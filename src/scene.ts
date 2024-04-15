@@ -16,7 +16,7 @@ export class Scene {
     constructor() {
         this.spheres = [
             {
-                pos: [ 0, -5, 25 ], // left handed coordinate system
+                pos: [ 3, -5, 25 ], // left handed coordinate system
                 r: 6,
                 diffCol: [ 1, 1, 1 ],
                 specCol: [ 1, 1, 1 ],
@@ -29,7 +29,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 1, 1, 1 ],
                 specCol: [ 1, 1, 1 ],
-                reflect: true
+                reflect: false
             },
 
             // CEILING
@@ -47,7 +47,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 0.2, 1, 0.3 ],
                 specCol: [ 1, 1, 1 ],
-                reflect: false
+                reflect: true
             },
 
             // LEFT
