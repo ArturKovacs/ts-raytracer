@@ -55,3 +55,7 @@ export function vecDiv(v: Vec3, num: number): Vec3 {
 export function normalize(v: Vec3): Vec3 {
     return vecDiv(v, vecLen(v));
 }
+
+export function reflect(inDir: Vec3, normal: Vec3): Vec3 {
+    return vecAdd(inDir, vecMult(normal, -2 * dot(normal, inDir)));
+}

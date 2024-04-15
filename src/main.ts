@@ -16,9 +16,11 @@ const image = context.createImageData(WIDTH, HEIGHT);
 const sharedPixelsBuffer = new SharedArrayBuffer(WIDTH * HEIGHT * 4);
 const sharedPixelsView = new Uint8ClampedArray(sharedPixelsBuffer);
 
-const THREAD_COUNT = 16;
+const THREAD_COUNT = navigator.hardwareConcurrency;
+console.log("Thread count: ", THREAD_COUNT);
 
-const ANIM_DURATION = 3000; // In ms
+// const ANIM_DURATION = 5000; // In ms
+const ANIM_DURATION = Infinity; // In ms
 let startTime = performance.now();
 let frameCount = 0;
 
@@ -70,7 +72,7 @@ function render(time: number) {
     0, -5, 20
   ];
 
-  const camPos: Vec3 = [Math.sin(time * 0.0005) * 4, -3, 8];
+  const camPos: Vec3 = [Math.sin(time * 0.001) * 7, -3, 8];
   const camDir: Vec3 = normalize(vecSub(lookAt, camPos));
 
   const msg: RenderThreadMsg = {

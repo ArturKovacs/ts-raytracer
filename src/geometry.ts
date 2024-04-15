@@ -10,6 +10,7 @@ export interface Sphere {
     r: number;
     diffCol: Vec3;
     specCol: Vec3; //(1, 1, 1) means perfect mirror (note that if you want a mirror the diffCol should be (0, 0, 0))
+    reflect: boolean;
 };
 
 /**
@@ -23,9 +24,17 @@ export function intersectSphere(ray: Ray, sphere: Sphere): number {
     //if the Ray is facing "away" from the Sphere
     //if(dot(theRay.dir, normalize(sphere.pos-theRay.orig)) < 0) return -1.f;
 
-    const a = dot(ray.dir, ray.dir);
-    const b = 2 * dot(vecSub(ray.orig, sphere.pos), ray.dir);
-    const c = -(sphere.r * sphere.r) + dot(vecSub(ray.orig, sphere.pos), vecSub(ray.orig, sphere.pos));
+    const rayOrigMinusSpherePos = vecSub(ray.orig, sphere.pos);
+
+    // rather surprisingly, saving a property to a variable
+    // and referencing the variable is significantly faster
+    // than accessing the property every time
+    const rayDir = ray.dir;
+    const r = sphere.r;
+
+    const a = dot(rayDir, rayDir);
+    const b = 2 * dot(rayOrigMinusSpherePos, rayDir);
+    const c = -(r * r) + dot(rayOrigMinusSpherePos, rayOrigMinusSpherePos);
 
     //discriminant
     const D = b * b - 4 * a * c;
@@ -35,11 +44,12 @@ export function intersectSphere(ray: Ray, sphere: Sphere): number {
         return Infinity;
     }
 
-    const t1 = (-b + Math.sqrt(D)) / (2 * a);
-    const t2 = (-b - Math.sqrt(D)) / (2 * a);
+    const sqrtD = Math.sqrt(D);
+    const twoA = 2 * a;
+    const t1 = (-b + sqrtD) / twoA;
+    const t2 = (-b - sqrtD) / twoA;
     if (t1 > 0 && t2 > 0) {
         return Math.min(t1, t2);
     }
-
     return Math.max(t1, t2);
 }

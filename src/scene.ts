@@ -7,6 +7,7 @@ export interface HitResult {
     normal: Vec3;
     diffCol: Vec3;
     specCol: Vec3;
+    reflect: boolean;
 }
 
 export class Scene {
@@ -15,10 +16,11 @@ export class Scene {
     constructor() {
         this.spheres = [
             {
-                pos: [ 0, -5, 20 ], // left handed coordinate system
-                r: 2,
+                pos: [ 0, -5, 25 ], // left handed coordinate system
+                r: 6,
                 diffCol: [ 1, 1, 1 ],
                 specCol: [ 1, 1, 1 ],
+                reflect: true,
             },
 
             // FLOOR
@@ -27,6 +29,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 1, 1, 1 ],
                 specCol: [ 1, 1, 1 ],
+                reflect: true
             },
 
             // CEILING
@@ -35,6 +38,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 1, 1, 1 ],
                 specCol: [ 1, 1, 1 ],
+                reflect: false
             },
 
             // RIGHT
@@ -43,6 +47,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 0.2, 1, 0.3 ],
                 specCol: [ 1, 1, 1 ],
+                reflect: false
             },
 
             // LEFT
@@ -51,6 +56,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 0.3, 0.3, 1 ],
                 specCol: [ 1, 1, 1 ],
+                reflect: false
             },
 
             // BACK
@@ -59,6 +65,7 @@ export class Scene {
                 r: 500,
                 diffCol: [ 1, 0.3, 0.3 ],
                 specCol: [ 1, 1, 1 ],
+                reflect: false
             },
         ]
     }
@@ -78,14 +85,12 @@ export class Scene {
                     dist: closestDist,
                     diffCol: sphere.diffCol,
                     specCol: sphere.specCol,
+                    reflect: sphere.reflect,
                     normal: normalize(vecSub(hitPos, sphere.pos)),
                     pos: hitPos
                 };
             }
         }
-        // if ((result?.diffCol.y < 1) && result?.pos.y > 0) {
-        //     debugger;
-        // }
         return result
     }
 }

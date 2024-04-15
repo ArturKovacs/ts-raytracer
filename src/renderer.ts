@@ -1,11 +1,15 @@
 import { Ray } from "./geometry";
-import { Vec3, cross, dot, normalize, vecAdd, vecLen, vecMult, vecSub } from "./math";
+import { Vec3, cross, dot, normalize, reflect, vecAdd, vecLen, vecMult, vecSub } from "./math";
 import { HitResult, Scene } from "./scene";
 
 export const WIDTH = 800;
 export const HEIGHT = 500;
 const ASPECT_RATIO = WIDTH / HEIGHT;
 const UP: Vec3 = [ 0, 1, 0 ];
+
+const MAX_RAY_DEPTH = 3;
+
+const BG_COLOR: Vec3 = [0, 0, 0];
 
 export class Renderer {
     protected scene: Scene;
@@ -37,7 +41,14 @@ export class Renderer {
         // would cause a bigger field of view)
         const widthOrHeight = HEIGHT;
 
-        for (let y = this.yStart; y < this.yEnd; y++) {
+        const intersect = this.scene.intersect.bind(this.scene);
+        const setPixel = this.pixelSlice.set.bind(this.pixelSlice);
+        const scene = this.scene;
+        const pixelSlice = this.pixelSlice;
+
+        const yStart = this.yStart;
+
+        for (let y = yStart; y < this.yEnd; y++) {
             for (let x = 0; x < WIDTH; x++) {
                 const targetDir = normalize(
                     vecAdd(
@@ -52,21 +63,27 @@ export class Renderer {
                     dir: targetDir,
                     orig: camPos
                 };
-
-                const hitResult = this.scene.intersect(ray);
-                let color;
-                if (hitResult) {
-                    const colorVec = this.shade(hitResult);
-                    color = colorToArray(colorVec);
-                } else {
-                    color = [0, 0, 0, 255];
-                }
-                this.pixelSlice.set(color, ((y - this.yStart) * WIDTH + x) * 4);
+                const color = colorToArray(this.getColor(ray, 0));
+                pixelSlice.set(color, ((y - yStart) * WIDTH + x) * 4);
             }
         }
     }
 
-    shade(surfacePoint: HitResult): Vec3 {
+    getColor(ray: Ray, depth: number): Vec3 {
+        if (depth > MAX_RAY_DEPTH) return BG_COLOR;
+
+        const surfacePoint = this.scene.intersect(ray);
+        if (!surfacePoint) return BG_COLOR;
+
+        if (surfacePoint.reflect) {
+            const toReflected = reflect(ray.dir, surfacePoint.normal);
+            const reflectRay = {
+                orig: vecAdd(surfacePoint.pos, vecMult(toReflected, 0.01)),
+                dir: toReflected
+            };
+            return vecMult(this.getColor(reflectRay, depth + 1), 0.8);
+        }
+
         const lightPos: Vec3 = [
             10, 
             5,
