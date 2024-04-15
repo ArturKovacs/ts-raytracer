@@ -18,6 +18,10 @@ const sharedPixelsView = new Uint8ClampedArray(sharedPixelsBuffer);
 
 const THREAD_COUNT = 16;
 
+const ANIM_DURATION = 3000; // In ms
+let startTime = performance.now();
+let frameCount = 0;
+
 const finishedWithFrame = new Set<number>();
 const workers: Worker[] = [];
 const yStartFromThreadIndex = (threadIndex: number) => Math.floor((threadIndex / THREAD_COUNT) * HEIGHT);
@@ -49,7 +53,13 @@ for (let i = 0; i < THREAD_COUNT; i++) {
       context.clearRect(0, 0, WIDTH, HEIGHT);
       image.data.set(sharedPixelsView);
       context.putImageData(image, 0, 0);
-      requestAnimationFrame(render)
+      frameCount++;
+      const elapsed = performance.now() - startTime;
+      if (elapsed > ANIM_DURATION) {
+        console.log("Rendered at", frameCount / (elapsed / 1000), "avg FPS");
+      } else {
+        requestAnimationFrame(render)
+      }
     }
   })
   workers.push(worker)
