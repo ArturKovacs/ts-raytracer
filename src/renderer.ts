@@ -5,7 +5,7 @@ import { HitResult, Scene } from "./scene";
 export const WIDTH = 800;
 export const HEIGHT = 500;
 const ASPECT_RATIO = WIDTH / HEIGHT;
-const UP: Vec3 = { x: 0, y: 1, z: 0 };
+const UP: Vec3 = [ 0, 1, 0 ];
 
 export class Renderer {
     protected scene: Scene;
@@ -67,11 +67,11 @@ export class Renderer {
     }
 
     shade(surfacePoint: HitResult): Vec3 {
-        const lightPos: Vec3 = {
-            x: 10, 
-            y: 5,
-            z: 0
-        };
+        const lightPos: Vec3 = [
+            10, 
+            5,
+            0
+        ];
 
         const toLight = vecSub(lightPos, surfacePoint.pos);
         const toLightNormalized = normalize(toLight);
@@ -91,9 +91,9 @@ export class Renderer {
 
 function colorToArray(color: Vec3): [number, number, number, number] {
     return [
-        color.x * 255,
-        color.y * 255,
-        color.z * 255,
+        color[0] * 255,
+        color[1] * 255,
+        color[2] * 255,
         255
     ]
 }

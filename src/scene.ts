@@ -15,50 +15,50 @@ export class Scene {
     constructor() {
         this.spheres = [
             {
-                pos: { x: 0, y: -5, z: 20 }, // left handed coordinate system
+                pos: [ 0, -5, 20 ], // left handed coordinate system
                 r: 2,
-                diffCol: { x: 1, y: 1, z: 1 },
-                specCol: { x: 1, y: 1, z: 1 },
+                diffCol: [ 1, 1, 1 ],
+                specCol: [ 1, 1, 1 ],
             },
 
             // FLOOR
             {
-                pos: { x: 0, y: -515, z: 0 }, // left handed coordinate system
+                pos: [ 0, -515, 0 ], // left handed coordinate system
                 r: 500,
-                diffCol: { x: 1, y: 1, z: 1 },
-                specCol: { x: 1, y: 1, z: 1 },
+                diffCol: [ 1, 1, 1 ],
+                specCol: [ 1, 1, 1 ],
             },
 
             // CEILING
             {
-                pos: { x: 0, y: 515, z: 50 }, // left handed coordinate system
+                pos: [ 0, 515, 50 ], // left handed coordinate system
                 r: 500,
-                diffCol: { x: 1, y: 1, z: 1 },
-                specCol: { x: 1, y: 1, z: 1 },
+                diffCol: [ 1, 1, 1 ],
+                specCol: [ 1, 1, 1 ],
             },
 
             // RIGHT
             {
-                pos: { x: 515, y: 0, z: 50 }, // left handed coordinate system
+                pos: [ 515, 0, 50 ], // left handed coordinate system
                 r: 500,
-                diffCol: { x: 0.2, y: 1, z: 0.3 },
-                specCol: { x: 1, y: 1, z: 1 },
+                diffCol: [ 0.2, 1, 0.3 ],
+                specCol: [ 1, 1, 1 ],
             },
 
             // LEFT
             {
-                pos: { x: -515, y: 0, z: 50 }, // left handed coordinate system
+                pos: [ -515, 0, 50 ], // left handed coordinate system
                 r: 500,
-                diffCol: { x: 0.3, y: 0.3, z: 1 },
-                specCol: { x: 1, y: 1, z: 1 },
+                diffCol: [ 0.3, 0.3, 1 ],
+                specCol: [ 1, 1, 1 ],
             },
 
             // BACK
             {
-                pos: { x: 0, y: 0, z: 555 }, // left handed coordinate system
+                pos: [ 0, 0, 555 ], // left handed coordinate system
                 r: 500,
-                diffCol: { x: 1, y: 0.3, z: 0.3 },
-                specCol: { x: 1, y: 1, z: 1 },
+                diffCol: [ 1, 0.3, 0.3 ],
+                specCol: [ 1, 1, 1 ],
             },
         ]
     }

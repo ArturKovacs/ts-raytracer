@@ -22,45 +22,45 @@ const finishedWithFrame = new Set<number>();
 const workers: Worker[] = [];
 const yStartFromThreadIndex = (threadIndex: number) => Math.floor((threadIndex / THREAD_COUNT) * HEIGHT);
 for (let i = 0; i < THREAD_COUNT; i++) {
-    const worker = new Worker(new URL("./render-thread.ts", import.meta.url), { type: "module" });
-    const yStart = yStartFromThreadIndex(i);
-    const yEnd = yStartFromThreadIndex(i + 1);
+  const worker = new Worker(new URL("./render-thread.ts", import.meta.url), { type: "module" });
+  const yStart = yStartFromThreadIndex(i);
+  const yEnd = yStartFromThreadIndex(i + 1);
 
-    const initMessage: RenderThreadMsg = {
-      kind: "init",
-      heigit: HEIGHT,
-      width: WIDTH,
-      pixelSlice: sharedPixelsView.subarray(
-        yStart * WIDTH * BYTES_PER_PIXEL,
-        yEnd * WIDTH * BYTES_PER_PIXEL
-      ),
-      yStart,
-      yEnd
-    };
-    worker.postMessage(initMessage);
+  const initMessage: RenderThreadMsg = {
+    kind: "init",
+    heigit: HEIGHT,
+    width: WIDTH,
+    pixelSlice: sharedPixelsView.subarray(
+      yStart * WIDTH * BYTES_PER_PIXEL,
+      yEnd * WIDTH * BYTES_PER_PIXEL
+    ),
+    yStart,
+    yEnd
+  };
+  worker.postMessage(initMessage);
 
-    worker.addEventListener("message", (event: MessageEvent<RenderThreadOutput>) => {
-        finishedWithFrame.add(event.data.yStart);
-        // console.log("received render done for", event.data.yStart)
-        if (finishedWithFrame.size == THREAD_COUNT) {
-          // debugger;
-          // We are done with rendering.
-          // Let's copy the pixels to the canvas.
-          context.clearRect(0, 0, WIDTH, HEIGHT);
-          image.data.set(sharedPixelsView);
-          context.putImageData(image, 0, 0);
-          requestAnimationFrame(render)
-        }
-    })
-    workers.push(worker)
+  worker.addEventListener("message", (event: MessageEvent<RenderThreadOutput>) => {
+    finishedWithFrame.add(event.data.yStart);
+    // console.log("received render done for", event.data.yStart)
+    if (finishedWithFrame.size == THREAD_COUNT) {
+      // debugger;
+      // We are done with rendering.
+      // Let's copy the pixels to the canvas.
+      context.clearRect(0, 0, WIDTH, HEIGHT);
+      image.data.set(sharedPixelsView);
+      context.putImageData(image, 0, 0);
+      requestAnimationFrame(render)
+    }
+  })
+  workers.push(worker)
 }
 
 function render(time: number) {
-  const lookAt: Vec3 = {
-    x: 0, y: -5, z: 20
-  };
+  const lookAt: Vec3 = [
+    0, -5, 20
+  ];
 
-  const camPos: Vec3 = { x: Math.sin(time * 0.0005) * 4, y: -3, z: 8 };
+  const camPos: Vec3 = [Math.sin(time * 0.0005) * 4, -3, 8];
   const camDir: Vec3 = normalize(vecSub(lookAt, camPos));
 
   const msg: RenderThreadMsg = {

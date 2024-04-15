@@ -1,22 +1,18 @@
 
-export interface Vec3 {
-    x: number;
-    y: number;
-    z: number;
-}
+export type Vec3 = [number, number, number];
 
 /** Returns the dot product of two vectors */
 export function dot(a: Vec3, b: Vec3): number {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
+    return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
 /** Returns the cross product of two vectors */
 export function cross(a: Vec3, b: Vec3): Vec3 {
-    return {
-        x: a.y * b.z - a.z * b.y,
-        y: a.z * b.x - a.x * b.z,
-        z: a.x * b.y - a.y * b.x,
-    }
+    return [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0]
+    ]
 }
 
 export function vecLen(v: Vec3): number {
@@ -24,32 +20,36 @@ export function vecLen(v: Vec3): number {
 }
 
 export function vecAdd(a: Vec3, b: Vec3): Vec3 {
-    return { 
-        x: a.x + b.x,
-        y: a.y + b.y,
-        z: a.z + b.z,
-    };
+    return [
+        a[0] + b[0],
+        a[1] + b[1],
+        a[2] + b[2],
+    ];
 }
 
 export function vecSub(a: Vec3, b: Vec3): Vec3 {
-    return { 
-        x: a.x - b.x,
-        y: a.y - b.y,
-        z: a.z - b.z,
-    };
+    return [
+        a[0] - b[0],
+        a[1] - b[1],
+        a[2] - b[2],
+    ];
 }
 
 export function vecMult(v: Vec3, num: number): Vec3 {
-    return { 
-        x: v.x * num,
-        y: v.y * num,
-        z: v.z * num,
-    };
+    return [
+        v[0] * num,
+        v[1] * num,
+        v[2] * num,
+    ];
 }
 
 /** Divides each component of the vecotr by `num` */
 export function vecDiv(v: Vec3, num: number): Vec3 {
-    return { x: v.x / num, y: v.y / num, z: v.z / num };
+    return [
+        v[0] / num,
+        v[1] / num,
+        v[2] / num
+    ];
 }
 
 export function normalize(v: Vec3): Vec3 {
